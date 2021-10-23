@@ -8,16 +8,17 @@ app = Flask(__name__)
 app.secret_key = 'kostis'
 api = Api(app)
 
-jwt = JWT(app, authenticate, identity) # /auth
+jwt = JWT(app, authenticate, identity)  # /auth
 
 items = []
+
 
 class Item(Resource):
     parser = reqparse.RequestParser()
     parser.add_arguement('price',
-        type=float,
-        required=True,
-        help='This field cannot be left blank.'
+                         type=float,
+                         required=True,
+                         help='This field cannot be left blank.'
     )
 
     @jwt_required()
@@ -34,11 +35,13 @@ class Item(Resource):
         items.append(item)
         return item, 201
 
+    @jwt_required()
     def delete(self, name):
         global items
         items = list(filter(lambda x: x['name'] != name, items))
         return {'message': 'Item deleted'}
 
+    @jwt_required()
     def put(self, name):
         data = Item.parser.parse_args()
         item = next(filter(lambda x: x['name'] == name, items), None)
@@ -49,9 +52,11 @@ class Item(Resource):
             item.update(data)
         return item
 
+
 class ItemList(Resource):
     def get(self):
         return {'items': items}
+
 
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
