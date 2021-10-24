@@ -1,11 +1,4 @@
-from user import User
-
-userid_mapping = { 1: {
-        'id': 1,
-        'username': 'bob',
-        'password': 'bob'
-    }
-}
+from resources.user import User
 
 def authenticate(username, password):
     user = User.find_by_username(username)
